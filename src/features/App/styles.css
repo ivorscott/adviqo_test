@@ -1,0 +1,22 @@
+html,
+body {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  background: #eaf6ff;
+}
+
+.app {
+  min-width: 70vw;
+}
+
+.app__layout {
+  min-height: 50vh;
+  padding: 2rem;
+}
+
+@media screen and (max-width: 992px) {
+  .app {
+    width: 100vw;
+  }
+}
