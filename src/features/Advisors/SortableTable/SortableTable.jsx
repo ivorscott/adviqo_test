@@ -172,9 +172,9 @@ function SortableTable({
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell align="right">{row.status}</TableCell>
-                        <TableCell align="right">{row.specialty}</TableCell>
-                        <TableCell align="right">{row.language}</TableCell>
+                        <TableCell align="left">{row.status}</TableCell>
+                        <TableCell align="left">{row.specialty}</TableCell>
+                        <TableCell align="left">{row.language}</TableCell>
                         <TableCell align="right">
                           <Rating
                             name="read-only"
