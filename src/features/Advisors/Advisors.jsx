@@ -3,10 +3,13 @@ import { fetchAdvisors } from "./reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { SortableTable } from "./SortableTable";
 import {
-  filterByOnline,
-  filterByLanguage,
-  filterByLanguageAndOnline,
-} from "./filters";
+Languages,
+Availability,
+LanguageSpecification,
+AvailabilitySpecification,
+AndSpecification,
+Filter
+} from "./Filter";
 
 const Advisors = () => {
   const dispatch = useDispatch();
@@ -16,7 +19,9 @@ const Advisors = () => {
 
   const [selection, setSelection] = useState(null);
   const { entities, loading } = useSelector((state) => state.advisors);
-  const languages = ["All", ...new Set(entities.map((item) => item.language))];
+  const languages = ["All", ...Object.values(Languages)];
+
+  const availableSpec = new AvailabilitySpecification(Availability.Online)
 
   useEffect(() => {
     const fetch = async () => {
@@ -26,14 +31,18 @@ const Advisors = () => {
   }, [dispatch]);
 
   const handleLanguageFilter = (language) => {
+    const f = new Filter()
+    const languageSpec = new LanguageSpecification(language)
+    const andSpec = new AndSpecification(languageSpec, availableSpec)
+
     if (isOnlineFiltered) {
       if (language !== "All") {
         setLanguageSelection(language);
-        const data = filterByLanguageAndOnline(entities, language);
+        const data = f.filter(entities, andSpec);
         setSelection(data);
       } else {
         setLanguageSelection("");
-        const data = filterByOnline(entities);
+        const data = f.filter(entities, availableSpec);
         setSelection(data);
       }
       return;
@@ -46,15 +55,19 @@ const Advisors = () => {
     }
 
     setLanguageSelection(language);
-    const data = filterByLanguage(entities, language);
+    const data = f.filter(entities, languageSpec);
     setSelection(data);
   };
 
   const handleOnlineFilter = () => {
+    const f = new Filter()
+    const languageSpec = new LanguageSpecification(languageSelection)
+    const andSpec = new AndSpecification(languageSpec, availableSpec)
+
     if (isOnlineFiltered) {
       if (languageSelection) {
         setOnlineFilter(false);
-        const data = filterByLanguage(entities, languageSelection);
+        const data = f.filter(entities, languageSpec);
         setSelection(data);
         return;
       } else {
@@ -67,12 +80,12 @@ const Advisors = () => {
     setOnlineFilter(true);
 
     if (languageSelection) {
-      const data = filterByLanguageAndOnline(entities, languageSelection);
+      const data = f.filter(entities, andSpec);
       setSelection(data);
       return;
     }
 
-    const data = filterByOnline(entities);
+    const data = f.filter(entities, availableSpec);
     setSelection(data);
   };
 
